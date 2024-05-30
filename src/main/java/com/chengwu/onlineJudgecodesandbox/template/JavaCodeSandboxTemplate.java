@@ -205,7 +205,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
         if (executeOutput.size() == executeMessageList.size()) {
             executeCodeResponse.setStatus(1);
         }
-        executeCodeResponse.setexecuteOutput(executeOutput);
+        executeCodeResponse.setExecuteOutput(executeOutput);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMemory(maxmemory);
         judgeInfo.setTime(maxTime);
@@ -235,7 +235,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
      */
     private void getErrorResponse(Throwable e) {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
-        executeCodeResponse.setexecuteOutput(new ArrayList<>());
+        executeCodeResponse.setExecuteOutput(new ArrayList<>());
         executeCodeResponse.setMessage(e.getMessage());
         // 代码沙箱错误，编译错误
         executeCodeResponse.setStatus(2);
