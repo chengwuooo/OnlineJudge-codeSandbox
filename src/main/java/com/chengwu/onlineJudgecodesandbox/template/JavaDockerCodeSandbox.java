@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Java调用Docker 实现代码沙箱
@@ -28,7 +30,7 @@ import java.util.List;
 @Component
 public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
 
-    public static final long TIME_OUT = 10000L;
+    public static final long TIME_OUT = 5000L;
 
     // 首次拉取镜像
     public static final Boolean FIRST_INIT = true;
@@ -91,7 +93,7 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
         hostConfig.withMemorySwap(1000L);
         // 设置安全管理 读写权限
         String profileConfig = ResourceUtil.readUtf8Str("profile.json");
-        hostConfig.withSecurityOpts(Arrays.asList("seccomp=" + profileConfig));
+        hostConfig.withSecurityOpts(Collections.singletonList("seccomp=" + profileConfig));
         // 设置容器挂载目录
         hostConfig.setBinds(new Bind(userCodeParentPath, new Volume("/app")));
         System.out.println("11111111111111111111111111111111111" + userCodeParentPath);
@@ -204,7 +206,7 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
                 stopWatch.start();
                 dockerClient.execStartCmd(execId)
                         .exec(execStartResultCallback)
-                        .awaitCompletion();
+                        .awaitCompletion(TIME_OUT, TimeUnit.MILLISECONDS);
                 // 结束计时
                 stopWatch.stop();
                 // 获取总共时间
@@ -212,8 +214,12 @@ public class JavaDockerCodeSandbox extends JavaCodeSandboxTemplate {
                 // 关闭统计
                 statsCmd.close();
             } catch (InterruptedException e) {
-                System.out.println("程序执行异常");
-                throw new RuntimeException(e);
+                System.out.println("程序执行超时");
+                execDockerMessage.setErrorMessage("程序执行超时");
+                execDockerMessage.setTime(TIME_OUT);
+                execDockerMessage.setMemory(memory[0]);
+                executeMessageList.add(execDockerMessage);
+                return executeMessageList;
             }
             System.out.println("耗时：" + time + " ms");
             execDockerMessage.setMessage(messageDocker[0][0]);

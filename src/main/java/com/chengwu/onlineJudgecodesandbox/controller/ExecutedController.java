@@ -14,19 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/")
 public class ExecutedController {
-
     @Resource
     private JavaNativeCodeSandbox javaNativeCodeSandbox;
-
-    /**
-     * 接口测试
-     *
-     * @return
-     */
-    @GetMapping("/hello")
-    public String healthCheck() {
-        return "ok";
-    }
 
     /**
      * 执行代码接口
