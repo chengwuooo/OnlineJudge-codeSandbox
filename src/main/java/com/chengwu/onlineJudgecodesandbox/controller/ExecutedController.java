@@ -3,6 +3,7 @@ package com.chengwu.onlineJudgecodesandbox.controller;
 import com.chengwu.onlineJudgecodesandbox.constants.AuthRequest;
 import com.chengwu.onlineJudgecodesandbox.model.ExecuteCodeRequest;
 import com.chengwu.onlineJudgecodesandbox.model.ExecuteCodeResponse;
+import com.chengwu.onlineJudgecodesandbox.template.JavaDockerCodeSandbox;
 import com.chengwu.onlineJudgecodesandbox.template.JavaNativeCodeSandbox;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,13 +11,14 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 @RestController
 @RequestMapping("/")
 public class ExecutedController {
     @Resource
     private JavaNativeCodeSandbox javaNativeCodeSandbox;
 
+    @Resource
+    private JavaDockerCodeSandbox javaDockerCodeSandbox;
     /**
      * 执行代码接口
      *
@@ -36,6 +38,8 @@ public class ExecutedController {
         if (executeCodeRequest == null) {
             throw new RuntimeException("请求参数错误");
         }
-        return javaNativeCodeSandbox.executeCode(executeCodeRequest);
+//        return javaNativeCodeSandbox.executeCode(executeCodeRequest);
+        return javaDockerCodeSandbox.executeCode(executeCodeRequest);
     }
+
 }
