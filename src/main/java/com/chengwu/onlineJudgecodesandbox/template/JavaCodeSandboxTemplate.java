@@ -179,7 +179,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
     public ExecuteCodeResponse getOutputResponse(List<ExecuteMessage> executeMessageList) {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         // 执行错误
-        List<String> outputList = new ArrayList<>();
+        List<String> executeOutput = new ArrayList<>();
         // 取用时最大值，便于判断是否超时
         long maxTime = 0;
         long maxmemory = 0;
@@ -191,7 +191,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
                 executeCodeResponse.setStatus(3);
                 break;
             }
-            outputList.add(executeMessage.getMessage());
+            executeOutput.add(executeMessage.getMessage());
             Long executeTime = executeMessage.getTime();
             if (executeTime != null) {
                 maxTime = Math.max(maxTime, executeTime);
@@ -202,10 +202,10 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
             }
         }
         // 正常执行完成
-        if (outputList.size() == executeMessageList.size()) {
+        if (executeOutput.size() == executeMessageList.size()) {
             executeCodeResponse.setStatus(1);
         }
-        executeCodeResponse.setOutputList(outputList);
+        executeCodeResponse.setexecuteOutput(executeOutput);
         JudgeInfo judgeInfo = new JudgeInfo();
         judgeInfo.setMemory(maxmemory);
         judgeInfo.setTime(maxTime);
@@ -235,7 +235,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
      */
     private void getErrorResponse(Throwable e) {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
-        executeCodeResponse.setOutputList(new ArrayList<>());
+        executeCodeResponse.setexecuteOutput(new ArrayList<>());
         executeCodeResponse.setMessage(e.getMessage());
         // 代码沙箱错误，编译错误
         executeCodeResponse.setStatus(2);

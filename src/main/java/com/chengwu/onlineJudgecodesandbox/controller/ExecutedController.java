@@ -18,6 +18,14 @@ public class ExecutedController {
     private JavaDockerCodeSandbox javaDockerCodeSandbox;
 
     /**
+     * hello world 接口
+     */
+    @GetMapping("/hello")
+    public String hello() {
+        return "hello world";
+    }
+
+    /**
      * 执行代码接口
      */
     @PostMapping("/executeCode")
