@@ -20,7 +20,7 @@ public class DockerCodeSandboxDemo {
 
 //         1、拉取镜像嘿嘿
         String image = "nginx:latest";
-        PullImageCmd pullImageCmd = dockerClient.pullImageCmd(image);
+//        PullImageCmd pullImageCmd = dockerClient.pullImageCmd(image);
 //        PullImageResultCallback resultCallback = new PullImageResultCallback() {
 //            @Override
 //            public void onNext(PullResponseItem item) {

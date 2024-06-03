@@ -68,20 +68,24 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
 
         // 2、编译代码，得到class文件
         ExecuteMessage compileFileExecuteMessage = compileFile(userCodeFile);
+        if (compileFileExecuteMessage == null) {
+            return outputResponse;
+        }
         log.info("编译后信息：{}", compileFileExecuteMessage);
 
         // 3、执行程序
         List<ExecuteMessage> executeMessageList = runCode(userCodeFile, inputList);
-
+        if (executeMessageList == null) {
+            return outputResponse;
+        }
         // 4、整理输出结果
         outputResponse = getOutputResponse(executeMessageList);
 
-        // 5、文件清理
-//        boolean del = clearFile(userCodeFile);
-//        if (!del) {
-//            log.error("deleteFile Field ,userCodeFilePath = {}", userCodeFile.getAbsoluteFile());
-//        }
-
+//         5、文件清理
+        boolean del = clearFile(userCodeFile);
+        if (!del) {
+            log.error("deleteFile Field ,userCodeFilePath = {}", userCodeFile.getAbsoluteFile());
+        }
         return outputResponse;
     }
 
@@ -107,6 +111,10 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
         // 实际存放文件的目录
         String userCodePath = userCodeParentPath + File.separator + GLOBAL_CODE_CLASS_NAME;
         File userCodeFile = FileUtil.writeString(code, userCodePath, StandardCharsets.UTF_8);
+        //检查文件是否存在
+        if (!FileUtil.exist(userCodePath)) {
+            throw new RuntimeException("文件不存在！");
+        }
         return userCodeFile;
     }
 
@@ -127,8 +135,8 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
             return executeMessage;
         } catch (Exception e) {
             getErrorResponse(e);
-            throw new RuntimeException(e);
         }
+        return null;
     }
 
     /**
@@ -237,7 +245,7 @@ public abstract class JavaCodeSandboxTemplate implements CodeSandBox {
         ExecuteCodeResponse executeCodeResponse = new ExecuteCodeResponse();
         executeCodeResponse.setExecuteOutput(new ArrayList<>());
         executeCodeResponse.setMessage(e.getMessage());
-        // 代码沙箱错误，编译错误
+        // 代码沙箱错误，编译|运行错误
         executeCodeResponse.setStatus(2);
         executeCodeResponse.setJudgeInfo(new JudgeInfo());
         this.outputResponse = executeCodeResponse;
